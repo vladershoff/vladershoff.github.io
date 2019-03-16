@@ -1,18 +1,77 @@
 <html>
+    <head>
+        <meta charset="utf-8">
+    </head>
     <body>
-        <textarea id="in" style="width: 400px; height: 400px"></textarea>
-        <textarea id="out" style="width: 400px; height: 400px"></textarea>
-        <script
-            src="http://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous">
-        </script>
+        <div>
+            <h1>Экранирование ковычек</h1>
+            <textarea id="in_escape" style="width: 600px; height: 600px"></textarea>
+            <textarea id="out_escape" style="width: 600px; height: 600px"></textarea>
+        </div>
+        <div>
+            <h1>SQL-запрос в массив</h1>
+            <div>
+                <label for="sql_end_string_char">Символ обрамляющий строку: </label>
+                <select id="sql_end_string_char">
+                    <option>"</option>
+                    <option>'</option>
+                </select>
+            </div>
+            <textarea id="in_sql" style="width: 600px; height: 600px"></textarea>
+            <textarea id="out_sql" style="width: 600px; height: 600px"></textarea>
+        </div>
+        <div>
+            <h1>Кодирование в Base64</h1>
+            <textarea id="in_base64encode" style="width: 600px; height: 600px"></textarea>
+            <textarea id="out_base64encode" style="width: 600px; height: 600px"></textarea>
+        </div>
+        <div>
+            <h1>Декодирование из Base64</h1>
+            <textarea id="in_base64decode" style="width: 600px; height: 600px"></textarea>
+            <textarea id="out_base64decode" style="width: 600px; height: 600px"></textarea>
+        </div>
         <script>
-            $('#in').change(function () {
-                var str = $('#in').val();
+            document.getElementById('in_escape').addEventListener('change', function (event) {
+                var str = event.target.value;
                 str = str.replace(/'/g, "\\'");
-                $('#out').val(str);
+                document.getElementById('out_escape').value = str;
             });
+            
+            document.getElementById('in_sql').addEventListener('change', function (event) {
+                var str = event.target.value,
+                    delimiter = '\n',
+                    strResult = '',
+                    endChar = document.getElementById('sql_end_string_char').value;
+
+                str = str.replace(new RegExp(endChar, 'g'), '\\' + endChar);
+
+                strResult += 'Array(\r\n';
+                strResult += '    ' + endChar + 'sql:' + endChar + ',\r\n';
+                strResult += '    ' + endChar + str.split(delimiter).join(endChar + ',\r\n    ' + endChar) + endChar + '\r\n';
+                strResult += ');';
+
+                document.getElementById('out_sql').value = strResult;
+            });
+            
+            document.getElementById('in_base64encode').addEventListener('change', function (event) {
+                var str = event.target.value,
+                str = utf8_to_b64(str);
+                document.getElementById('out_base64encode').value = str;
+            });
+
+            document.getElementById('in_base64decode').addEventListener('change', function (event) {
+                var str = str = event.target.value,
+                str = b64_to_utf8(str);
+                document.getElementById('out_base64decode').value = str;
+            });
+
+            function utf8_to_b64(str) {
+                return window.btoa(unescape(encodeURIComponent(str)));
+            }
+
+            function b64_to_utf8(str) {
+                return decodeURIComponent(escape(window.atob(str)));
+            }
         </script>
     </body>
 </html>
