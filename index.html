@@ -1,0 +1,18 @@
+<html>
+    <body>
+        <textarea id="in" style="width: 400px; height: 400px"></textarea>
+        <textarea id="out" style="width: 400px; height: 400px"></textarea>
+        <script
+            src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous">
+        </script>
+        <script>
+            $('#in').change(function () {
+                var str = $('#in').val();
+                str = str.replace(/'/g, "\\'");
+                $('#out').val(str);
+            });
+        </script>
+    </body>
+</html>
